@@ -31,14 +31,14 @@ class Motion_Planner:
 
 
     def update(self, dt):       
-        # if np.round(self.t_start, 2) - int(self.t_start) == 0:  # Recompute planning every second
-        if self.t_start == 0:                                     # Compute planning only once at the start
+        if np.round(self.t_start, 2) - int(self.t_start) == 0:  # Recompute planning every second
             # Recompute the UFO's future position
             self.predict_ufo(dt, self.horizon)
             for idx in range(len(self.ufo_prediction)): # append some of predicted positions to the UFO's future states
                 if idx % 30 == 0:
                     self.ufo.future_states.append(self.ufo_prediction[idx])
 
+        if self.t_start == 0:                                     # Compute planning only once at the start
             # Recompute the interception trajectory
             self.compute_interception_trajectory()
 
@@ -84,10 +84,9 @@ class Motion_Planner:
         # Second point is the UFO's current height
         height_point = [self.interceptor.pose[0], self.interceptor.pose[1], self.ufo.pose[2]]
         waypoints.append(height_point)
-        up_time = np.sqrt(2/3 * self.ufo.pose[2])   # Time estimation to reach the UFO's height with max thrust and cst drag (10m/s)
+        up_time = np.sqrt(self.ufo.pose[2])   # Time estimation to reach the UFO's height with max thrust and cst drag (15m/s)
         
         # Check feasibility of the interception
-        print("Up time: ", up_time)
         self.times.append(up_time)
 
         # UFO's predicted pose in the x-y plane
@@ -97,6 +96,7 @@ class Motion_Planner:
 
         delta = norm(np.array(ufo_pos) - np.array(intercept_point))  # Distance between predicted pose of UFO and current intercept point
         iter = 0
+        print("--TARGET SELECTION---")
         while delta > intercept_distance:
             # Update the intercept point
             intercept_point = ufo_pos
@@ -105,18 +105,19 @@ class Motion_Planner:
             distance = norm(np.array(intercept_point) - np.array(height_point))
             horizontal_time = distance / (self.interceptor.max_speed *0.50)   # Add a safety factor since trajectory is not straight
 
-            print("Horizontal time: ", horizontal_time)
-
             # Compute actual position of the UFO at this time
             ufo_pos = self.ufo.predict_pose(horizontal_time + up_time)
 
             # Update delta
             delta = norm(np.array(ufo_pos) - np.array(intercept_point))
-            print("Delta: ", delta, " Intercept Point: ", intercept_point, " UFO Position: ", ufo_pos)
+            print("Iteration: ", iter, " -- Delta to Objective: ", delta)
             iter += 1
             if iter > 1000:
                 raise ValueError("UFO is too fast to intercept.")
 
+
+        print("Takeoff Time: ", up_time)
+        print("Flight to Target Time: ", horizontal_time)
         waypoints.append(intercept_point)
         self.times.append(horizontal_time + up_time)
 

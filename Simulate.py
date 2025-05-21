@@ -7,15 +7,15 @@ This file runs the simulation loop and handles the time-stepping for the UFO and
 
 ############       Arguments       ############
 # Initial UFO values
-ufo_position = [-1000, -500, 100]
-ufo_velocity = [30.0, -10.0, 0.0]
+ufo_position = [-1000, -600, 110]
+ufo_velocity = [20.0, 15.0, -1.0]
 ufo_acceleration = [0.0, 0.0, 0.0]
 
 base_position = [0, 0, 0]  # Interceptor base position
 
 # Rendering options
 live_rendering = False
-animation_speed = 3          # Adjust this to speed up or slow down the animation
+animation_speed = 5          # Adjust this to speed up or slow down the animation
 map_limits = [(-1000, 1000), (-1000, 1000), (0, 200)]  # X, Y, Z limits for the plot
 
 # Simulation parameters
@@ -77,7 +77,6 @@ def render_interception(dt, sim_time, ufo, planner, interceptor):
         ax.set_ylabel('Y')
         ax.set_zlabel('Z')
         ax.set_title('UFO Interception Simulation')
-        ax.legend()
         return []
 
     def render_update(frame):
@@ -90,6 +89,13 @@ def render_interception(dt, sim_time, ufo, planner, interceptor):
         # Render current state
         render(ax, ufo, 'r')
         render(ax, interceptor, 'b')
+
+        if interceptor.intercepted:
+            ax.text(0, 0, 0, "Intercepted!", color='g', fontsize=20)
+            ax.text(0, 0, -50, f"Time: {interceptor.time:.2f}s", color='g', fontsize=15)
+
+            # Stop the animation
+            ani.event_source.stop()
         return []
 
     ani = FuncAnimation(fig, render_update, frames=steps,

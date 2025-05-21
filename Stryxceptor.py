@@ -23,6 +23,7 @@ class Stryxceptor:
         self.future_states = []
         self.future_times = []
         self.time = 0.0
+        self.intercepted = False
 
         # Constants
         self.max_speed = 83.0  # m/s  --> 300 km/h 
@@ -86,16 +87,19 @@ class Stryxceptor:
         # self.pose += self.velocity * dt
 
         # ---- Trajectory Follower ----
-        if len(self.future_states) == 0:
-            self.pose = self.pose 
+        if self.intercepted == False:
+            if len(self.future_states) == 0:
+                self.pose = self.pose 
+            else:
+
+                if self.time >= self.future_times[0]:
+                    self.pose = self.future_states.pop(0)
+                    self.future_times.pop(0)
+                if len(self.future_states) == 0:   
+                    self.intercepted = True
+                    print("Intercepted!")
         else:
-            print(f"Future Setpoint time: {self.future_times[0]:.2f} s")
-            print(f"Future Setpoint: {self.future_states[0]}")
-            print("---------------------")
-            print(f"Current Time: {self.time:.2f} s")
-            print(f"Current Pose: {self.pose}")
-            if self.time >= self.future_times[0]:
-                self.pose = self.future_states.pop(0)
-                self.future_times.pop(0)
+            self.pose += self.velocity * dt 
+
 
 
