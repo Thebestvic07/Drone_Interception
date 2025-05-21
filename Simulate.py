@@ -14,7 +14,7 @@ ufo_acceleration = [0.0, 0.0, 0.0]
 base_position = [0, 0, 0]  # Interceptor base position
 
 # Rendering options
-live_rendering = True
+live_rendering = False
 animation_speed = 3          # Adjust this to speed up or slow down the animation
 map_limits = [(-1000, 1000), (-1000, 1000), (0, 200)]  # X, Y, Z limits for the plot
 

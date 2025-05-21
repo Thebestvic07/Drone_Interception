@@ -29,6 +29,7 @@ This project simulates a real-time 3D drone interception scenario where an auton
 ├── Motion_Planner.py   # Trajectory prediction and optimal path computation
 ├── Stryxceptor.py      # (Expected) Interceptor class with control logic
 └── README.md           # You are here
+```
 
 ## ⚙️ Requirements
 
@@ -40,21 +41,24 @@ Install dependencies:
 
 ```bash
 pip install numpy matplotlib
+```
 
 ## ▶️ How to use 
 
 Simply run the simulation with:
 ```bash
 python Simulate.py
+```
 
 You should see overall information on the terminal and a plot of the interception.
 
 To run an animation instead, set live_rendering = True inside Simulate.py.
+You can also play with the parameters of the UFO defined in Simulate.py
 
 ## 🧠 Underlying Hypothesis
 
 - Interceptor is modelled by a point with acceleration, speed and rotation constraints 
-- UFO is modelled as a point with constant acceleration (no world dynamics applied)
+- UFO is modelled as a point with constant acceleration (no world dynamics applied) --> Accel should be zero or small in order to not fail the simulation
 - No obstacle is considered for the trajectory (although it would be quite easy to tackle with an A* algo for the waypoints selection)
 
 # 📌 Still To Do 
